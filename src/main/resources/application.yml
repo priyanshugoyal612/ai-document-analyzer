@@ -1,0 +1,98 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+spring:
+  application:
+    name: ai-document-analyzer
+  jackson:
+    time-zone: UTC
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5433/documentdb
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+  
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-4o-mini
+          temperature: 0.3
+          max-tokens: 2000
+  
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+# Custom application properties
+app:
+  pageindex:
+    api-key: ${PAGEINDEX_API_KEY:d6bebadf3c0742a5bfde0995a1f1586e}
+    api-url: https://api.pageindex.ai
+  document:
+    storage:
+      path: ${DOCUMENT_STORAGE_PATH:./uploads}
+      max-size: 52428800  # 50MB in bytes
+    allowed-types:
+      - application/pdf
+      - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+      - text/plain
+    processing:
+      chunk-size: 1000
+      chunk-overlap: 200
+      max-pages-per-chunk: 5
+  
+  query:
+    max-retrieved-pages: 10
+    answer-max-tokens: 1000
+    similarity-threshold: 0.7
+
+# Logging configuration
+logging:
+  level:
+    com.ai.document: DEBUG
+    org.springframework.ai: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/document-analyzer.log
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
