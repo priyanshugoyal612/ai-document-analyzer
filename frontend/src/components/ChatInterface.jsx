@@ -117,7 +117,7 @@ export default function ChatInterface() {
                 <option value="">All Documents</option>
                 {documents.map((doc) => (
                   <option key={doc.id} value={String(doc.id)}>
-                    {doc.originalFilename}
+                    {doc.filename}
                   </option>
                 ))}
               </select>
