@@ -1,10 +1,12 @@
 package com.ai.document.service;
 
+import com.ai.document.advisor.ChatLoggerAdvisor;
 import com.ai.document.entity.DocumentPage;
 import com.ai.document.repository.DocumentPageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +19,7 @@ public class OpenAIChatService {
     
     private final ChatClient chatClient;
     private final DocumentPageRepository documentPageRepository;
+    private final ChatLoggerAdvisor chatLoggerAdvisor;
     
     public String chatWithDocuments(String query) {
         log.info("Chatting with all documents using OpenAI: {}", query);
@@ -59,19 +62,30 @@ public class OpenAIChatService {
             You are a helpful AI assistant. Answer the user's question based on the provided document context.
             If the context doesn't contain enough information to answer the question, say so.
             Use the page numbers to reference specific parts of the document.
-            
+
             Document Context:
             {context}
             """;
-        
+
         String fullPrompt = systemPrompt.replace("{context}", context) + "\n\nQuestion: " + query;
-        
-        String response = chatClient.prompt()
-            .user(fullPrompt)
-            .call()
-            .content();
-        
-        return response;
+
+        log.info("=== Chat Request ===");
+        log.info("Query: {}", query);
+        log.info("Context Length: {} characters", context.length());
+        log.info("Full Prompt: {}", fullPrompt.length() > 500 ? fullPrompt.substring(0, 500) + "..." : fullPrompt);
+
+        try {
+            ChatResponse response = chatClient.prompt()
+                .user(fullPrompt)
+                .call()
+                .chatResponse();
+
+            chatLoggerAdvisor.logResponse(response);
+            return response.getResult().getOutput().getContent();
+        } catch (Exception e) {
+            chatLoggerAdvisor.logError(query, e);
+            throw e;
+        }
     }
     
     public String chatDirectly(String query, String context) {

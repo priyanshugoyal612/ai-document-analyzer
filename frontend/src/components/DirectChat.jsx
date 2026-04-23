@@ -53,46 +53,60 @@ export default function DirectChat() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold text-gray-900">Direct Chat</h2>
+        <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          Direct Chat
+        </h2>
         <p className="mt-2 text-gray-600">Chat with OpenAI using custom context or JSON data</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Sidebar */}
         <div className="lg:col-span-1 space-y-4">
-          <div className="bg-white rounded-lg shadow p-4 space-y-4">
-            <h3 className="font-medium text-gray-900">Settings</h3>
+          <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl p-6 space-y-5 border border-white/20">
+            <h3 className="font-semibold text-gray-900">Settings</h3>
             
             {/* Chat Type Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Context Type
               </label>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={() => setChatType('direct')}
-                  className={`p-3 border-2 rounded-lg text-left ${
+                  className={`p-4 border-2 rounded-xl text-left transition-all duration-200 ${
                     chatType === 'direct'
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-300 hover:border-gray-400'
+                      ? 'border-indigo-500 bg-gradient-to-br from-indigo-50 to-purple-50 shadow-md'
+                      : 'border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/50'
                   }`}
                 >
                   <div className="flex items-center space-x-2">
-                    <FileText className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm font-medium">Text</span>
+                    <div className={`p-2 rounded-lg ${
+                      chatType === 'direct' ? 'bg-indigo-500' : 'bg-gray-200'
+                    }`}>
+                      <FileText className={`h-4 w-4 ${
+                        chatType === 'direct' ? 'text-white' : 'text-gray-600'
+                      }`} />
+                    </div>
+                    <span className="text-sm font-semibold">Text</span>
                   </div>
                 </button>
                 <button
                   onClick={() => setChatType('json')}
-                  className={`p-3 border-2 rounded-lg text-left ${
+                  className={`p-4 border-2 rounded-xl text-left transition-all duration-200 ${
                     chatType === 'json'
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-300 hover:border-gray-400'
+                      ? 'border-purple-500 bg-gradient-to-br from-purple-50 to-pink-50 shadow-md'
+                      : 'border-gray-200 hover:border-purple-300 hover:bg-purple-50/50'
                   }`}
                 >
                   <div className="flex items-center space-x-2">
-                    <Code className="h-4 w-4 text-purple-600" />
-                    <span className="text-sm font-medium">JSON</span>
+                    <div className={`p-2 rounded-lg ${
+                      chatType === 'json' ? 'bg-purple-500' : 'bg-gray-200'
+                    }`}>
+                      <Code className={`h-4 w-4 ${
+                        chatType === 'json' ? 'text-white' : 'text-gray-600'
+                      }`} />
+                    </div>
+                    <span className="text-sm font-semibold">JSON</span>
                   </div>
                 </button>
               </div>
@@ -100,7 +114,7 @@ export default function DirectChat() {
 
             {/* Context Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 {chatType === 'direct' ? 'Context' : 'JSON Context'}
               </label>
               <textarea
@@ -109,28 +123,30 @@ export default function DirectChat() {
                 placeholder={chatType === 'direct' 
                   ? 'Enter your context here...' 
                   : 'Enter JSON data here...'}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none bg-white/50 transition-all duration-200"
                 rows={8}
               />
             </div>
 
-            <div className="text-xs text-gray-500">
-              <p className="mb-1">Example for Text:</p>
-              <code className="bg-gray-100 p-1 rounded">Java is a programming language</code>
-              <p className="mt-2 mb-1">Example for JSON:</p>
-              <code className="bg-gray-100 p-1 rounded">{`{"key": "value"}`}</code>
+            <div className="text-xs text-gray-500 bg-gray-50 rounded-lg p-3">
+              <p className="mb-1 font-medium">Example for Text:</p>
+              <code className="bg-white p-1 rounded border border-gray-200">Java is a programming language</code>
+              <p className="mt-2 mb-1 font-medium">Example for JSON:</p>
+              <code className="bg-white p-1 rounded border border-gray-200">{`{"key": "value"}`}</code>
             </div>
           </div>
         </div>
 
         {/* Chat Area */}
-        <div className="lg:col-span-2 bg-white rounded-lg shadow flex flex-col h-[600px]">
+        <div className="lg:col-span-2 bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl flex flex-col h-[600px] border border-white/20">
           {/* Chat Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {chatHistory.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-gray-400">
-                <MessageSquare className="h-16 w-16 mb-4" />
-                <p className="text-center">Start a conversation by asking a question</p>
+                <div className="bg-gradient-to-br from-indigo-100 to-purple-100 p-4 rounded-full mb-4">
+                  <MessageSquare className="h-12 w-12 text-indigo-600" />
+                </div>
+                <p className="text-center font-medium">Start a conversation by asking a question</p>
               </div>
             ) : (
               chatHistory.map((message, index) => (
@@ -139,10 +155,10 @@ export default function DirectChat() {
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[80%] rounded-lg p-4 ${
+                    className={`max-w-[80%] rounded-2xl p-4 ${
                       message.role === 'user'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-900'
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
+                        : 'bg-gray-100 text-gray-900 border border-gray-200'
                     }`}
                   >
                     {message.content}
@@ -152,29 +168,29 @@ export default function DirectChat() {
             )}
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-gray-100 rounded-lg p-4">
-                  <Loader2 className="h-5 w-5 animate-spin text-gray-600" />
+                <div className="bg-gray-100 rounded-2xl p-4 border border-gray-200">
+                  <Loader2 className="h-5 w-5 animate-spin text-indigo-600" />
                 </div>
               </div>
             )}
           </div>
 
           {/* Input Area */}
-          <div className="border-t border-gray-200 p-4">
+          <div className="border-t border-gray-200 p-4 bg-white/50">
             <div className="flex space-x-3">
               <textarea
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Ask a question..."
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none bg-white/70 transition-all duration-200"
                 rows={2}
                 disabled={loading}
               />
               <button
                 onClick={handleSendMessage}
                 disabled={loading || !query.trim()}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 <Send className="h-5 w-5" />
               </button>
